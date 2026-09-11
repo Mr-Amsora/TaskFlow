@@ -23,7 +23,7 @@ A small custom exception hierarchy (e.g. `InvalidTaskStateException`, `Duplicate
 A generic repository abstraction, e.g. `Repository<T, ID>`, backing at least one in-memory feature (e.g. a cache of today's due tasks).
 
 ### 5. Hand-Rolled Algorithm (required, no shortcuts)
-Implement your **own** sort (merge sort, quicksort, or insertion sort — your pick) to produce a "due soon" report, ordered by `dueDate` then `priority`. Do **not** use `Collections.sort`, `Arrays.sort`, or a `Comparator`-based sort for this specific feature. Comment the Big-O and why you picked that one.
+Implement your **own** sort (merge sort, quicksort, or insertion sort — your pick) to produce a "due soon" report, ordered by `dueDate` then `Priority`. Do **not** use `Collections.sort`, `Arrays.sort`, or a `Comparator`-based sort for this specific feature. Comment the Big-O and why you picked that one.
 
 ### 6. Streams & Lambdas
 At least 3 real aggregations via Streams — e.g. tasks completed per user this week, overdue-task count by priority, average time-to-completion.
