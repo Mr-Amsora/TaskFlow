@@ -3,14 +3,13 @@ package com.ammar.taskflow.domain;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "task")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -40,7 +39,7 @@ public class Task {
         this.status = Status.TODO;
     }
 
-    public UUID getId() { return id; }
+    public Long getId() { return id; }
     public User getOwner() { return owner; }
     public String getTitle() { return title; }
     public LocalDateTime getDueDate() { return dueDate; }

@@ -13,7 +13,7 @@ public class ConnectionManager {
         entityManagerFactory = Persistence.createEntityManagerFactory("taskflow");
     }
 
-    public static synchronized ConnectionManager getInstance() {
+    public static ConnectionManager getInstance() {
         if (instance == null) {
             instance = new ConnectionManager();
         }
