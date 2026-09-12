@@ -3,6 +3,8 @@ package com.ammar.taskflow.service;
 import com.ammar.taskflow.domain.DeliveryChannel;
 import com.ammar.taskflow.domain.Reminder;
 import com.ammar.taskflow.domain.Task;
+import com.ammar.taskflow.reminder.ReminderFactory;
+import com.ammar.taskflow.reminder.ReminderSender;
 import com.ammar.taskflow.repository.ReminderRepository;
 
 import java.time.LocalDateTime;
@@ -41,6 +43,10 @@ public class ReminderService {
         return reminderRepository.update(reminder);
     }
 
+    public void sendReminder(Reminder reminder) {
+        ReminderSender sender = ReminderFactory.getSender(reminder.getDeliveryChannel());
+        sender.send(reminder);
+    }
 
     public Reminder getReminderByLinkedTask(Task task) {
         Reminder reminder = reminderRepository.findByTask(task);
