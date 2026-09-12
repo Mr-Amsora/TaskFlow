@@ -29,6 +29,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @OneToOne(mappedBy = "linkedTask", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Reminder reminder;
+
     public Task(){}
 
     public Task(User owner, String title, LocalDateTime dueDate, Priority priority){
@@ -45,6 +48,12 @@ public class Task {
     public LocalDateTime getDueDate() { return dueDate; }
     public Priority getPriority() { return priority; }
     public Status getStatus() { return status; }
+    public Reminder getReminder() {return reminder;}
 
-
+    public void updateTitle(String title) {this.title = title;}
+    public void updateDueDate(LocalDateTime dueDate) {this.dueDate = dueDate;}
+    public void setAsDone() {this.status = Status.DONE;}
+    public void setAsInProgress() {this.status = Status.IN_PROGRESS;}
+    public void setAsOverdue() {this.status = Status.OVERDUE;}
+    public void updatePriority(Priority priority) {this.priority = priority;}
 }

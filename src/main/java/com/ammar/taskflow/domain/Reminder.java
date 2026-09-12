@@ -30,4 +30,7 @@ public class Reminder {
     public Task getLinkedTask() { return linkedTask; }
     public LocalDateTime getTriggerTime() { return triggerTime; }
     public DeliveryChannel getDeliveryChannel() { return deliveryChannel; }
+
+    public void updateDeliveryChannel(DeliveryChannel deliveryChannel) {this.deliveryChannel = deliveryChannel;}
+    public void updateTriggerTime(LocalDateTime triggerTime) {this.triggerTime = triggerTime;}
 }
