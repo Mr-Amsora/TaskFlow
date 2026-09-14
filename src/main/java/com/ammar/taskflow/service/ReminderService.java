@@ -23,6 +23,11 @@ public class ReminderService {
         if (existingReminder != null) {
             throw new IllegalArgumentException("A reminder already exists for this task");
         }
+
+        if (!triggerTime.isBefore(linkedTask.getDueDate())) {
+            throw new IllegalArgumentException("Reminder trigger time must be before the task's due date");
+        }
+
         Reminder reminder = new Reminder(linkedTask, triggerTime, deliveryChannel);
         Reminder saved = reminderRepository.save(reminder);
 

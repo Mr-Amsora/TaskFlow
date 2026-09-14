@@ -1,13 +1,11 @@
 package com.ammar.taskflow.service;
 
-import com.ammar.taskflow.domain.Priority;
-import com.ammar.taskflow.domain.Status;
-import com.ammar.taskflow.domain.Task;
-import com.ammar.taskflow.domain.User;
+import com.ammar.taskflow.domain.*;
 import com.ammar.taskflow.event.TaskCompletedEvent;
 import com.ammar.taskflow.event.TaskCreatedEvent;
 import com.ammar.taskflow.event.TaskEventPublisher;
 import com.ammar.taskflow.exception.InvalidTaskStateException;
+import com.ammar.taskflow.repository.ReminderRepository;
 import com.ammar.taskflow.repository.TaskRepository;
 
 import java.time.LocalDateTime;
@@ -16,9 +14,11 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final ReminderRepository reminderRepository;
     private final TaskEventPublisher eventPublisher;
 
-    public TaskService(TaskRepository taskRepository, TaskEventPublisher eventPublisher) {
+    public TaskService(TaskRepository taskRepository, TaskEventPublisher eventPublisher , ReminderRepository reminderRepository) {
+        this.reminderRepository = reminderRepository;
         this.taskRepository = taskRepository;
         this.eventPublisher = eventPublisher;
     }
@@ -53,7 +53,14 @@ public class TaskService {
     public Task updateTaskDueDate(Long id, LocalDateTime dueDate){
         Task task = getTaskById(id);
         task.updateDueDate(dueDate);
-        return taskRepository.update(task);
+        Task updated = taskRepository.update(task);
+
+        if (task.getReminder() != null && dueDate.isBefore(task.getReminder().getTriggerTime())) {
+            reminderRepository.deleteById(task.getId());
+            System.out.println("[TaskFlow] Reminder deleted — new due date is before the reminder trigger time. Please recreate it.");
+        }
+
+        return updated;
     }
 
     public Task updateTaskPriority(Long id, Priority priority){

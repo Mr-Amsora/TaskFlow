@@ -24,7 +24,7 @@ public class Main {
         publisher.subscribe(new TaskStatsObserver());
 
         UserService userService = new UserService(userRepository);
-        TaskService taskService = new TaskService(taskRepository, publisher);
+        TaskService taskService = new TaskService(taskRepository, publisher , reminderRepository);
         ReminderService reminderService = new ReminderService(reminderRepository);
         TaskReportService taskReportService = new TaskReportService(taskRepository);
         TaskCacheService taskCacheService = new TaskCacheService(taskRepository);
