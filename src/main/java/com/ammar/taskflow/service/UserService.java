@@ -5,6 +5,7 @@ import com.ammar.taskflow.exception.DuplicateUserException;
 import com.ammar.taskflow.exception.InvalidUserEmailException;
 import com.ammar.taskflow.repository.UserRepository;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class UserService {
@@ -61,6 +62,10 @@ public class UserService {
             throw new InvalidUserEmailException("there is no user with this id");
         }
         return user;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     private void validateEmail(String email) {

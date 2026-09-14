@@ -1,49 +1,37 @@
 package com.ammar.taskflow;
 
+import com.ammar.taskflow.cli.TaskFlowCLI;
 import com.ammar.taskflow.config.ConnectionManager;
-import com.ammar.taskflow.domain.*;
 import com.ammar.taskflow.event.*;
 import com.ammar.taskflow.repository.ReminderRepository;
 import com.ammar.taskflow.repository.TaskRepository;
 import com.ammar.taskflow.repository.UserRepository;
+import com.ammar.taskflow.service.*;
 import jakarta.persistence.EntityManager;
-
-import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
-        EntityManager entityManager = ConnectionManager.getInstance().getEntityManager();
+        EntityManager em = ConnectionManager.getInstance().getEntityManager();
 
-        UserRepository userRepository = new UserRepository(entityManager);
-        TaskRepository taskRepository = new TaskRepository(entityManager);
-        ReminderRepository reminderRepository = new ReminderRepository(entityManager);
-
-        User user = userRepository.save(new User("Ammar", "ammar@example.com"));
-        System.out.println("Saved user id: " + user.getId());
-
-        Task task = taskRepository.save(
-                new Task(user, "Finish TaskFlow", LocalDateTime.now().plusDays(1), Priority.HIGH)
-        );
-        System.out.println("Saved task id: " + task.getId());
-
-        reminderRepository.save(
-                new Reminder(task, LocalDateTime.now().plusHours(1), DeliveryChannel.EMAIL)
-        );
-        System.out.println("Saved reminder for task id: " + task.getId());
+        UserRepository userRepository = new UserRepository(em);
+        TaskRepository taskRepository = new TaskRepository(em);
+        ReminderRepository reminderRepository = new ReminderRepository(em);
 
         TaskEventPublisher publisher = new TaskEventPublisher();
-        TaskStatsObserver stats = new TaskStatsObserver();
-
         publisher.subscribe(new LoggingObserver());
-        publisher.subscribe(stats);
         publisher.subscribe(new ReminderTriggerObserver(reminderRepository));
+        publisher.subscribe(new TaskStatsObserver());
 
-        publisher.publish(new TaskCreatedEvent(task));
-        publisher.publish(new TaskCompletedEvent(task));
+        UserService userService = new UserService(userRepository);
+        TaskService taskService = new TaskService(taskRepository, publisher);
+        ReminderService reminderService = new ReminderService(reminderRepository);
+        TaskReportService taskReportService = new TaskReportService(taskRepository);
+        TaskCacheService taskCacheService = new TaskCacheService(taskRepository);
 
-        System.out.println("Completed count: " + stats.getTotalCompletedTasks());
+        TaskFlowCLI cli = new TaskFlowCLI(userService, taskService, reminderService, taskReportService, taskCacheService);
+        cli.start();
 
-        entityManager.close();
+        em.close();
         ConnectionManager.getInstance().close();
     }
 }

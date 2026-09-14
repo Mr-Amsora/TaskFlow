@@ -4,6 +4,9 @@ import com.ammar.taskflow.domain.Priority;
 import com.ammar.taskflow.domain.Status;
 import com.ammar.taskflow.domain.Task;
 import com.ammar.taskflow.domain.User;
+import com.ammar.taskflow.event.TaskCompletedEvent;
+import com.ammar.taskflow.event.TaskCreatedEvent;
+import com.ammar.taskflow.event.TaskEventPublisher;
 import com.ammar.taskflow.exception.InvalidTaskStateException;
 import com.ammar.taskflow.repository.TaskRepository;
 
@@ -13,14 +16,18 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final TaskEventPublisher eventPublisher;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, TaskEventPublisher eventPublisher) {
         this.taskRepository = taskRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Task createTask(User owner, String title, LocalDateTime dueDate, Priority priority) {
         Task task = new Task(owner, title, dueDate, priority);
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        eventPublisher.publish(new TaskCreatedEvent(saved));
+        return saved;
     }
 
     public Task startTask(Long id){
@@ -38,7 +45,9 @@ public class TaskService {
             throw new InvalidTaskStateException("Cannot complete a task that is already done");
         }
         task.setAsDone();
-        return taskRepository.update(task);
+        Task updated = taskRepository.update(task);
+        eventPublisher.publish(new TaskCompletedEvent(updated));
+        return updated;
     }
 
     public Task updateTaskDueDate(Long id, LocalDateTime dueDate){
@@ -62,6 +71,10 @@ public class TaskService {
     public void deleteTaskById(Long id) {
         getTaskById(id);
         taskRepository.deleteById(id);
+    }
+
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
     }
 
     public List<Task> getTasksBeforeDueDate(LocalDateTime dueDate) {

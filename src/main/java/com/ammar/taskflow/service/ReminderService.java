@@ -8,6 +8,7 @@ import com.ammar.taskflow.reminder.ReminderSender;
 import com.ammar.taskflow.repository.ReminderRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ReminderService {
 
@@ -23,7 +24,12 @@ public class ReminderService {
             throw new IllegalArgumentException("A reminder already exists for this task");
         }
         Reminder reminder = new Reminder(linkedTask, triggerTime, deliveryChannel);
-        return reminderRepository.save(reminder);
+        Reminder saved = reminderRepository.save(reminder);
+
+        ReminderSender sender = ReminderFactory.getSender(saved.getDeliveryChannel());
+        sender.send(saved);
+
+        return saved;
     }
 
     public void deleteReminderByLinkedTask(Task linkedTask) {
@@ -46,6 +52,10 @@ public class ReminderService {
     public void sendReminder(Reminder reminder) {
         ReminderSender sender = ReminderFactory.getSender(reminder.getDeliveryChannel());
         sender.send(reminder);
+    }
+
+    public List<Reminder> getAllReminders() {
+        return reminderRepository.findAll();
     }
 
     public Reminder getReminderByLinkedTask(Task task) {
