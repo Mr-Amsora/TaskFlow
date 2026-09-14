@@ -7,6 +7,16 @@ import java.util.List;
 
 public class InsertionTaskSorter {
 
+
+    //we sort the list using the insertion sort algorithm
+    //the space complexity of the insertion sort algorithm is O(1) because it sorts the list
+    //in place and does not require any additional data structures that grow with the input size.
+    //the time complexity of the insertion sort algorithm is O(n^2) in the worst case,
+    //This happens when the list is sorted in reverse order,
+    //In the average and best cases, the time complexity is O(n^2) and O(n).
+    //honestly I picked it because it is simple to implement and understand,
+    //and it works well for small lists or nearly sorted lists.
+    //and it does not use advance topic like divide and conquer or recursion.
     public static void sort(List<Task> tasks) {
         for (int i = 1; i < tasks.size(); i++) {
             Task currentTask = tasks.get(i);

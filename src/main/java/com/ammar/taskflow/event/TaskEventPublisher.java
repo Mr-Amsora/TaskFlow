@@ -7,11 +7,11 @@ public class TaskEventPublisher {
 
     private List<TaskObserver> observers = new ArrayList<>();
 
-    public void subscribe(TaskObserver observer) {
+    public synchronized void subscribe(TaskObserver observer) {
         observers.add(observer);
     }
 
-    public void publish(TaskEvent event) {
+    public synchronized void publish(TaskEvent event) {
         observers.forEach(observer -> observer.onTaskEvent(event));
     }
 }

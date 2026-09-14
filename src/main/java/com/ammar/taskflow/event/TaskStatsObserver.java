@@ -5,13 +5,13 @@ public class TaskStatsObserver implements TaskObserver{
     private int totalCompletedTasks = 0;
 
     @Override
-    public void onTaskEvent(TaskEvent event) {
+    public synchronized void onTaskEvent(TaskEvent event) {
         if (event instanceof TaskCompletedEvent) {
             totalCompletedTasks++;
         }
     }
 
-    public int getTotalCompletedTasks() {
+    public synchronized int getTotalCompletedTasks() {
         return totalCompletedTasks;
     }
 }

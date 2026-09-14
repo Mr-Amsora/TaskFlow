@@ -15,19 +15,19 @@ public class TaskCacheService {
         this.taskRepository = taskRepository;
     }
 
-    public void refreshCache() {
+    public synchronized void refreshCache() {
         tasks.clear();
         tasks.addAll(taskRepository.findAll());
     }
 
-    public Task getTaskById(Long id) {
+    public synchronized Task getTaskById(Long id) {
         return tasks.stream()
                 .filter(task -> task.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    public List<Task> getAllTasks() {
+    public synchronized List<Task> getAllTasks() {
         return tasks;
     }
 }

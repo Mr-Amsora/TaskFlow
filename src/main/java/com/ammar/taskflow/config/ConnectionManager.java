@@ -13,14 +13,18 @@ public class ConnectionManager {
         entityManagerFactory = Persistence.createEntityManagerFactory("taskflow");
     }
 
-    public static ConnectionManager getInstance() {
+    public EntityManagerFactory getEntityManagerFactory() {
+        return entityManagerFactory;
+    }
+
+    public static synchronized ConnectionManager getInstance() {
         if (instance == null) {
             instance = new ConnectionManager();
         }
         return instance;
     }
 
-    public EntityManager getEntityManager() {
+    public synchronized EntityManager getEntityManager() {
         return entityManagerFactory.createEntityManager();
     }
 

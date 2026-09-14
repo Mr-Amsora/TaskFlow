@@ -11,6 +11,7 @@ import jakarta.persistence.EntityManager;
 
 public class Main {
     public static void main(String[] args) {
+
         EntityManager em = ConnectionManager.getInstance().getEntityManager();
 
         UserRepository userRepository = new UserRepository(em);
@@ -28,9 +29,14 @@ public class Main {
         TaskReportService taskReportService = new TaskReportService(taskRepository);
         TaskCacheService taskCacheService = new TaskCacheService(taskRepository);
 
+        OverdueTaskScannerService scanner = new OverdueTaskScannerService(
+                ConnectionManager.getInstance().getEntityManagerFactory(), publisher);
+        scanner.start();
+
         TaskFlowCLI cli = new TaskFlowCLI(userService, taskService, reminderService, taskReportService, taskCacheService);
         cli.start();
 
+        scanner.stop();
         em.close();
         ConnectionManager.getInstance().close();
     }
