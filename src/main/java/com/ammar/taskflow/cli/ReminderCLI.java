@@ -81,7 +81,7 @@ public class ReminderCLI {
             return;
         }
         try {
-            Reminder reminder = reminderService.createReminder(task, task.getDueDate().minusHours(hours), channel);
+            Reminder reminder = reminderService.createReminder(task, LocalDateTime.now().plusHours(hours), channel);
             System.out.println("Reminder created successfully for task with ID: " + reminder.getLinkedTask().getId());
         } catch (Exception e) {
             System.out.println("Error creating reminder: " + e.getMessage());

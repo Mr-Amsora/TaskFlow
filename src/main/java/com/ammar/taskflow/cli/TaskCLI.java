@@ -51,11 +51,16 @@ public class TaskCLI {
 
     private void createTask(){
         System.out.print("Enter The Owner ID:");
-        Long ownerId = Long.parseLong(scanner.nextLine());
+        String scannerInput = scanner.nextLine();
         User user;
         try {
+            Long ownerId = Long.parseLong(scannerInput);
             user = userService.getUserById(ownerId);
-        } catch (Exception e) {
+        }catch (NumberFormatException e) {
+            System.out.println("Invalid Owner ID. Please enter a valid number.");
+            return;
+        }
+        catch (Exception e) {
             System.out.println("Error occurred while fetching user: " + e.getMessage());
             return;
         }
